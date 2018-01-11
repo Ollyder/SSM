@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--  配置整合mybatis-->
+    <!-- 1 配置数据库 -->
+    <context:property-placeholder location="classpath:jdbc.properties" />
+
+    <!-- c3p0数据库连接池 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          p:driverClass="${jdbc.driver}"
+          p:jdbcUrl="${jdbc.url}"
+          p:user="${jdbc.username}"
+          p:password="${jdbc.password}"
+
+          p:maxPoolSize="30"
+          p:minPoolSize="10"
+          p:autoCommitOnClose="false"
+          p:checkoutTimeout="10000"
+          p:acquireRetryAttempts="2" />
+
+    <!-- sqlSessionFactory -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+          p:dataSource-ref="dataSource"
+          p:typeAliasesPackage="com.yuhang.entity"
+          p:configLocation="classpath:mybatis-config.xml"
+          p:mapperLocations="classpath:mapper/*.xml" />
+
+    <!-- 扫描dao接口包 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+          p:sqlSessionFactoryBeanName="sqlSessionFactory"
+          p:basePackage="com.yuhang.dao" />
+</beans>
